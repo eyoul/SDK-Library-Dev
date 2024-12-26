@@ -1,0 +1,16 @@
+.venev/
+
+*.pyc
+__pycache__/
+
+instance/
+migrations/
+.pytest_cache/
+.coverage
+htmlcov/
+db.sqlite3
+dist/
+build/
+*.egg-info/
+trash/
+workpapers/
