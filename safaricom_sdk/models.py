@@ -39,7 +39,7 @@ class STKPushRequest(BaseModel):
     TransactionDesc: str
     CallBackURL: str
     AccountReference: str
-    ReferenceData: Optional[List[ReferenceData]] = None
+    ReferenceData: Optional[List[ReferenceData]] = None # type: ignore
 
 class STKPushResponse(BaseModel):
     """STK Push response model"""
@@ -66,7 +66,7 @@ class C2BPaymentRequest(BaseModel):
     SourceSystem: str
     Timestamp: datetime
     Parameters: List[Parameter]
-    ReferenceData: Optional[List[ReferenceData]] = None
+    ReferenceData: Optional[List[ReferenceData]] = None # type: ignore
     Initiator: Initiator
     PrimaryParty: Party
     ReceiverParty: Party
