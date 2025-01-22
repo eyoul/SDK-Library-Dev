@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel, HttpUrl
+import requests
 
 class Configuration(BaseModel):
     """Configuration class for the Safaricom M-PESA SDK"""
@@ -48,3 +49,40 @@ class Configuration(BaseModel):
     def get_c2b_payment_url(self) -> str:
         """Get the complete C2B payment URL"""
         return f"{self.base_url}{self.c2b_payment_url}"
+
+    def get_access_token(self):
+        """Get access token from Safaricom API"""
+        url = "https://sandbox.saf.et/oauth/v1/generate"
+        querystring = {"grant_type": "client_credentials"}
+        payload = ""
+        headers = {
+            "Authorization": "EaGFMFzk72snYQQlmcDaiyvikjBF8R12HsHTcczzdSYJlm0HO01w3E28v1SXPIne8U3qMgi0d3esOd4rFfw0G244HatJUQH4BggUQpT0oqD2K9PJmg8CkhxN7xqlRkX13d6WM9gcQjEzRF1AdXAxI5GB0eYgJ4md7DI9XtumXHMmlOqNSs6LuQf/VpQ+zBPX7dCaHMz4blmghSxtXYBOFM9+1uJYv9y3vVVKGG+/bwyYXKXtBFRMMB3tiV52/sDh1EgP1CaeaOArNJSJDl20aQSVHsJpeT+JpOEu33a/Pj+jycoFZ6z8epEg+Uu49FDt0EG7mi/4kyCZRambv9G0/Q=="
+        }
+
+        try:
+            response = requests.request("GET", url, data=payload, headers=headers, params=querystring)
+            response.raise_for_status()  # Raise an error for bad responses
+            return response.json()  # Return the JSON response
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching access token: {str(e)}")
+            return None
+
+# Example of calling the method
+# config = Configuration()
+# token = config.get_access_token()
+# print(token)
+
+"""
+*** Authorization Request in Python ***
+
+import requests
+url = "https://sandbox.saf.et/oauth/v1/generate"
+querystring = {"grant_type":"client_credentials"}
+payload = ""
+headers = {
+  "Authorization": "Basic SWZPREdqdkdYM0FjWkFTcTdSa1RWZ2FTSklNY001RGQ6WUp4ZVcxMTZaV0dGNFIzaA=="
+}
+response = requests.request("GET", url, data=payload, headers=headers, params=querystring)
+print(response.text)
+      
+"""
