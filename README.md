@@ -116,14 +116,12 @@ The SDK includes various utility functions:
 - Timestamp formatting
 - Logging setup
 
-## Contributing
+## Project Status
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+🔒 **Private Project**
+
+This is a private SDK for Safaricom M-PESA integration, developed for internal use.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support, please open an issue on the GitHub repository or contact the maintainers.
+MIT License private project not to use without permission
