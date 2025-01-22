@@ -18,7 +18,6 @@ A Python SDK for integrating with Safaricom M-PESA APIs. This SDK provides a sim
 ## Installation
 
 ```bash
-pip install requests
 pip install safaricom-sdk
 ```
 
