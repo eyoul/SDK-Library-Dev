@@ -50,7 +50,7 @@ class MPESAClient:
     def stk_push(self, request: STKPushRequest) -> STKPushResponse:
         """Initiate STK Push request"""
         url = self.config.get_stkpush_url()
-        response = self._make_request("POST", url, request.dict())
+        response = self._make_request("POST", url, request.model_dump())
         return STKPushResponse(**response)
     
     def register_c2b_url(self, request: C2BRegisterURLRequest) -> Dict[str, Any]:
@@ -61,13 +61,13 @@ class MPESAClient:
     def process_c2b_payment(self, request: C2BPaymentRequest) -> TransactionResponse:
         """Process C2B payment"""
         url = self.config.get_c2b_payment_url()
-        response = self._make_request("POST", url, request.dict())
+        response = self._make_request("POST", url, request.model_dump())
         return TransactionResponse(**response)
     
     def process_b2c_payment(self, request: B2CRequest) -> TransactionResponse:
         """Process B2C payment"""
         url = self.config.get_b2c_url()
-        response = self._make_request("POST", url, request.dict())
+        response = self._make_request("POST", url, request.model_dump())
         return TransactionResponse(**response)
     
     @staticmethod
