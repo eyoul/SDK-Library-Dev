@@ -1,16 +1,72 @@
-.venev/
-
-*.pyc
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
 
-instance/
-migrations/
-.pytest_cache/
-.coverage
-htmlcov/
-db.sqlite3
+# C extensions
+*.so
+
+# Distribution / packaging
 dist/
 build/
 *.egg-info/
-trash/
-workpapers/
+
+# Virtual environments
+.env
+.venv
+venv/
+ENV/
+env/
+
+# IDE-specific files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Logs
+*.log
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Specific to your project
+*.sqlite3
+*.db
+
+# Secrets and sensitive information
+*.key
+*.pem
+*.cert
+
+# Temporary files
+*.swp
+*~
+
+# Compiled Python files
+*.pyc
