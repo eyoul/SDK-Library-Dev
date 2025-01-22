@@ -8,18 +8,20 @@ from safaricom_sdk.exceptions import MPESAError
 
 class TestAuthentication(unittest.TestCase):
 
-    @patch('safaricom_sdk.auth.requests.get')
-    def test_get_access_token(self, mock_get):
+    @patch('safaricom_sdk.auth.requests.request')
+    def test_get_access_token(self, mock_request):
         # Setup
         config = Configuration(consumer_key='test_key', consumer_secret='test_secret', timeout=5)
         auth = Authentication(config)
         
         # Mock the response for the access token
-        mock_get.return_value = MagicMock(status_code=200)
-        mock_get.return_value.json.return_value = {
-            "access_token": "mock_access_token",
-            "expires_in": "3600"
-        }
+        mock_request.return_value = MagicMock(
+            status_code=200, 
+            json=lambda: {
+                "access_token": "mock_access_token",
+                "expires_in": 3600
+            }
+        )
         
         # Act
         token = auth.get_access_token()
@@ -27,6 +29,14 @@ class TestAuthentication(unittest.TestCase):
         # Assert
         self.assertEqual(token, "mock_access_token")
         self.assertIsNotNone(auth._token_expiry)
+        
+        # Verify the request was made with correct headers
+        mock_request.assert_called_once_with(
+            "GET", 
+            'https://apisandbox.safaricom.et/v1/token/generate?grant_type=client_credentials', 
+            headers={'Authorization': 'Basic dGVzdF9rZXk6dGVzdF9zZWNyZXQ='}, 
+            verify=True
+        )
 
     @patch('safaricom_sdk.auth.requests.get')
     def test_refresh_access_token_failure(self, mock_get):
