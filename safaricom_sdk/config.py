@@ -11,6 +11,7 @@ class Configuration(BaseModel):
     timeout: int = 30
     max_retries: int = 3
     app_name: str = 'Testapp'  # Application name
+    verify_ssl: bool = True  # Add SSL verification flag
 
     # API endpoints
     base_url: HttpUrl = "https://developer.safaricom.et/apps"  # Ensure this is correct for production
@@ -71,18 +72,3 @@ class Configuration(BaseModel):
 # config = Configuration()
 # token = config.get_access_token()
 # print(token)
-
-"""
-*** Authorization Request in Python ***
-
-import requests
-url = "https://sandbox.saf.et/oauth/v1/generate"
-querystring = {"grant_type":"client_credentials"}
-payload = ""
-headers = {
-  "Authorization": "Basic SWZPREdqdkdYM0FjWkFTcTdSa1RWZ2FTSklNY001RGQ6WUp4ZVcxMTZaV0dGNFIzaA=="
-}
-response = requests.request("GET", url, data=payload, headers=headers, params=querystring)
-print(response.text)
-      
-"""
