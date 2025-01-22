@@ -6,8 +6,7 @@ from .exceptions import MPESAError
 from .config import Configuration
 
 class Authentication:
-    """Authentication handler for Safaricom M-PESA API"""
-    
+    """Authentication handler for Safaricom M-PESA API"""    
     def __init__(self, config: Configuration):
         self.config = config
         self._access_token: Optional[str] = None
