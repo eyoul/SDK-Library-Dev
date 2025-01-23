@@ -1,1 +1,17 @@
-python -m tests.test_config
+# Safaricom Sandbox Credentials
+MPESA_CONSUMER_KEY=lFqpIhZZpPM2WOpgyXamTMfaUiPOjR8xfaJGWXsqUGLEolY0
+MPESA_CONSUMER_SECRET=yeAv4eSvvK6u05KMi33vWQNkM6mfvrvGV61OgIAfgphYpEPgDvSKauGKGSInAKTUA
+MPESA_SHORTCODE=600000
+MPESA_PASSKEY=your_passkey
+TEST_PHONE_NUMBER=251777139917
+
+# Optional Credentials
+MPESA_INITIATOR_NAME=EyuApp
+MPESA_SECURITY_CREDENTIAL=your_security_credential
+
+# Callback URLs (Optional)
+CALLBACK_URL=https://your-domain.com/mpesa/callback
+C2B_CONFIRMATION_URL=https://your-domain.com/c2b/confirmation
+C2B_VALIDATION_URL=https://your-domain.com/c2b/validation
+B2C_TIMEOUT_URL=https://your-domain.com/b2c/timeout
+B2C_RESULT_URL=https://your-domain.com/b2c/result
