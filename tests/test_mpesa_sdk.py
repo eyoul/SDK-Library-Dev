@@ -18,7 +18,6 @@ from safaricom_sdk.utils import (
 load_dotenv()
 
 @pytest.fixture
-@pytest.fixture
 def mpesa_client():
     """Create a MPESAClient for testing"""
     config = Configuration(
@@ -111,6 +110,8 @@ def test_phone_number_validation():
         except Exception as e:
             pytest.fail(f"Phone number validation failed for {number}: {str(e)}")
 
+# Existing imports and code...
+
 def test_error_handling(mpesa_client):
     """Test error handling scenarios"""
     # Test with invalid credentials
@@ -123,3 +124,5 @@ def test_error_handling(mpesa_client):
     
     with pytest.raises(Exception):
         invalid_client.auth.get_access_token()
+
+# Add your new test functions here
