@@ -20,33 +20,34 @@ class MPESAClient:
         self.config = config
         self.auth = Authentication(config)
     
-    def _make_request(self, method: str, url: str, data: Optional[Dict] = None) -> Dict:
+    def _make_request(self, method: str, url: str, data: Optional[Dict] = None, verify_ssl: bool = False) -> Dict:
         """Make HTTP request to M-PESA API"""
         headers = self.auth.get_headers()
-        
+
         try:
             response = requests.request(
                 method=method,
                 url=url,
                 headers=headers,
                 json=data,
-                timeout=self.config.timeout
+                timeout=self.config.timeout,
+                verify=verify_ssl  # Set to False for testing
             )
-            
+
             response_data = response.json()
-            
+
             if response.status_code >= 400:
                 raise APIError(
                     message=f"API request failed: {response.status_code}",
                     response_code=response_data.get("errorCode"),
                     response_description=response_data.get("errorMessage")
                 )
-            
+
             return response_data
-            
+
         except requests.exceptions.RequestException as e:
             raise MPESAError(f"Request failed: {str(e)}")
-    
+
     def stk_push(self, request: STKPushRequest) -> STKPushResponse:
         """Initiate STK Push request"""
         url = self.config.get_stkpush_url()

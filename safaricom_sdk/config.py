@@ -1,17 +1,28 @@
+import os
 from typing import Optional
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, field_validator
 import requests
+import base64
 
 class Configuration(BaseModel):
     """Configuration class for the Safaricom M-PESA SDK"""
     
-    consumer_key: str = 'iYCMIkGY4jMlnXtVlybcZaZW7J2LybD11VGs6aI5MJbKuT8Q'  # Your Consumer Key
-    consumer_secret: str = 'Ld5Y9KJiLFNnGG5ceVNWxXp3tW1AYpZP7k6IG6kMQOpyEKOl43aKiYmjOxoPXglY'  # Your Consumer Secret
-    environment: str = "sandbox"  # Set to production
+    consumer_key: str = os.getenv('MPESA_CONSUMER_KEY', '')
+    consumer_secret: str = os.getenv('MPESA_CONSUMER_SECRET', '')
+    environment: str = os.getenv('MPESA_ENVIRONMENT', 'sandbox')
     timeout: int = 30
     max_retries: int = 3
-    app_name: str = 'Testapp'  # Application name
-    verify_ssl: bool = True  # Add SSL verification flag
+    app_name: str = os.getenv('APP_NAME', 'EyuApp')
+    verify_ssl: bool = True
+
+    # Validation to ensure credentials are provided
+    @field_validator('consumer_key', 'consumer_secret')
+    @classmethod
+    def validate_credentials(cls, v, info):
+        if not v:
+            raise ValueError(f"{info.field_name} must be set in environment variables. "
+                             "Please check your .env file or set MPESA_CONSUMER_KEY and MPESA_CONSUMER_SECRET.")
+        return v
 
     # API endpoints
     base_url: HttpUrl = "https://developer.safaricom.et/apps"  # Ensure this is correct for production
@@ -53,19 +64,36 @@ class Configuration(BaseModel):
 
     def get_access_token(self):
         """Get access token from Safaricom API"""
-        url = "https://sandbox.saf.et/oauth/v1/generate"
-        querystring = {"grant_type": "client_credentials"}
-        payload = ""
+        url = f"{self.base_url}{self.auth_url}"
+        
+        # Use base64 encoded credentials
+        credentials = f"{self.consumer_key}:{self.consumer_secret}"
+        encoded_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
+        
         headers = {
-            "Authorization": "EaGFMFzk72snYQQlmcDaiyvikjBF8R12HsHTcczzdSYJlm0HO01w3E28v1SXPIne8U3qMgi0d3esOd4rFfw0G244HatJUQH4BggUQpT0oqD2K9PJmg8CkhxN7xqlRkX13d6WM9gcQjEzRF1AdXAxI5GB0eYgJ4md7DI9XtumXHMmlOqNSs6LuQf/VpQ+zBPX7dCaHMz4blmghSxtXYBOFM9+1uJYv9y3vVVKGG+/bwyYXKXtBFRMMB3tiV52/sDh1EgP1CaeaOArNJSJDl20aQSVHsJpeT+JpOEu33a/Pj+jycoFZ6z8epEg+Uu49FDt0EG7mi/4kyCZRambv9G0/Q=="
+            "Authorization": f"Basic {encoded_credentials}",
+            "Content-Type": "application/x-www-form-urlencoded"
         }
+        
+        payload = "grant_type=client_credentials"
 
         try:
-            response = requests.request("GET", url, data=payload, headers=headers, params=querystring)
+            response = requests.request(
+                "POST", 
+                url, 
+                headers=headers, 
+                data=payload,
+                timeout=self.timeout
+            )
             response.raise_for_status()  # Raise an error for bad responses
+            
+            # Log the response for debugging
+            print(f"Access Token Response: {response.text}")
+            
             return response.json()  # Return the JSON response
         except requests.exceptions.RequestException as e:
             print(f"Error fetching access token: {str(e)}")
+            print(f"Response content: {response.text}")
             return None
 
 # Example of calling the method

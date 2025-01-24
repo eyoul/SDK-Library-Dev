@@ -15,13 +15,10 @@ class TestAuthentication(unittest.TestCase):
         auth = Authentication(config)
         
         # Mock the response for the access token
-        mock_request.return_value = MagicMock(
-            status_code=200, 
-            json=lambda: {
-                "access_token": "mock_access_token",
-                "expires_in": 3600
-            }
-        )
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.text = '{"access_token": "mock_access_token", "expires_in": 3600}'
+        mock_request.return_value = mock_response
         
         # Act
         token = auth.get_access_token()
@@ -32,10 +29,11 @@ class TestAuthentication(unittest.TestCase):
         
         # Verify the request was made with correct headers
         mock_request.assert_called_once_with(
-            "GET", 
-            'https://apisandbox.safaricom.et/v1/token/generate?grant_type=client_credentials', 
+            method='GET', 
+            url='https://apisandbox.safaricom.et/v1/token/generate?grant_type=client_credentials', 
             headers={'Authorization': 'Basic dGVzdF9rZXk6dGVzdF9zZWNyZXQ='}, 
-            verify=True
+            verify=True,
+            timeout=15
         )
 
     @patch('safaricom_sdk.auth.requests.get')
