@@ -84,5 +84,22 @@ def main():
     print("\n🔐 Demonstrating Password Generation:")
     demonstrate_password_generation()
 
+def test_demonstrate_phone_validation():
+    test_cases = [
+        ('0777139917', True),   # Local format
+        ('+251777139917', True),  # International format
+        ('251777139917', True),   # Full country code
+        ('0712345678', True),   # Another valid Ethiopian number
+        ('+251712345678', True),  # Another international format
+        ('invalid_number', False)  # Invalid case for testing
+    ]
+    
+    for number, expected in test_cases:
+        try:
+            validated = validate_phone_number(number)
+            assert expected == True  # Expecting validation to succeed
+        except ValueError:
+            assert expected == False  # Expecting validation to fail
+
 if __name__ == '__main__':
     main()
