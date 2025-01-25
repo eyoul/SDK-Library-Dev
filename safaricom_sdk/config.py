@@ -9,10 +9,10 @@ class Configuration(BaseModel):
     
     consumer_key: str = os.getenv('MPESA_CONSUMER_KEY', '')
     consumer_secret: str = os.getenv('MPESA_CONSUMER_SECRET', '')
-    environment: str = os.getenv('MPESA_ENVIRONMENT', 'sandbox')
+    environment: str = os.getenv('MPESA_ENVIRONMENT', '')
     timeout: int = 30
     max_retries: int = 3
-    app_name: str = os.getenv('APP_NAME', 'EyuApp')
+    app_name: str = os.getenv('APP_NAME', '')
     verify_ssl: bool = True
 
     # Validation to ensure credentials are provided
@@ -25,12 +25,12 @@ class Configuration(BaseModel):
         return v
 
     # API endpoints
-    base_url: HttpUrl = "https://developer.safaricom.et/apps"  # Ensure this is correct for production
-    auth_url: str = "/v1/oauth2/token"
-    stkpush_url: str = "/mpesa/stkpush/v3/processrequest"
+    base_url: HttpUrl = "https://apisandbox.safaricom.et"
+    auth_url: str = "/oauth/v1/generate?grant_type=client_credentials"
+    stkpush_url: str = "/mpesa/stkpush/v1/processrequest"
     b2c_url: str = "/mpesa/b2c/v1/paymentrequest"
-    c2b_register_url: str = "/v1/c2b-registerurl/register"
-    c2b_payment_url: str = "/v1/c2b/payments"
+    c2b_register_url: str = "/mpesa/c2b/v1/registerurl"
+    c2b_payment_url: str = "/mpesa/c2b/v1/simulate"
     
     # Optional configurations
     api_key: Optional[str] = None  # Update if you have an API key
