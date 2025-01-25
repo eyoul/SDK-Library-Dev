@@ -54,11 +54,54 @@ class MPESAClient:
         response = self._make_request("POST", url, request.model_dump())
         return STKPushResponse(**response)
     
-    def register_c2b_url(self, request: C2BRegisterURLRequest) -> Dict[str, Any]:
-        """Register C2B URLs"""
-        url = f"{self.config.get_c2b_register_url()}?apikey={self.config.api_key}"
-        return self._make_request("POST", url, request.dict())
-    
+    def register_c2b_url(self, request: C2BRegisterURLRequest) -> Dict:
+        """Register C2B URLs with comprehensive error handling"""
+        # Construct the URL with API key
+        url = f"{self.config.get_c2b_register_url()}?apikey={self.config.consumer_key}"
+        
+        # Convert the request to a dictionary
+        request_data = request.model_dump()
+        
+        # Ensure all required fields are present
+        request_data['CommandID'] = 'RegisterURL'
+        
+        try:
+            # Use form data instead of JSON
+            response = requests.post(
+                url, 
+                data=request_data,
+                headers={
+                    'Authorization': f'Bearer {self.auth.get_access_token()}',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                timeout=self.config.timeout,
+                verify=False  # Disable SSL verification for testing
+            )
+
+            # Log the full response for debugging
+            print(f"C2B Registration Response Status: {response.status_code}")
+            print(f"Response Headers: {dict(response.headers)}")
+            print(f"Response Content: {response.text}")
+
+            # Check for successful response
+            if response.status_code == 200:
+                try:
+                    return response.json()
+                except json.JSONDecodeError:
+                    # If JSON parsing fails, return the text
+                    return {"response_text": response.text}
+            else:
+                # Raise an error for non-200 status codes
+                raise MPESAError(f"C2B Registration failed with status {response.status_code}: {response.text}")
+
+        except Exception as e:
+            # Comprehensive error logging
+            print(f"C2B Registration Failed:")
+            print(f"URL: {url}")
+            print(f"Request Data: {json.dumps(request_data, indent=2)}")
+            print(f"Error: {str(e)}")
+            raise
+ 
     def process_c2b_payment(self, request: C2BPaymentRequest) -> TransactionResponse:
         """Process C2B payment"""
         url = self.config.get_c2b_payment_url()
