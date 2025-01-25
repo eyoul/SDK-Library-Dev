@@ -12,7 +12,9 @@ from safaricom_sdk.exceptions import MPESAError
 from safaricom_sdk.models import (
     STKPushRequest, 
     C2BPaymentRequest, 
-    B2CRequest
+    B2CRequest,
+    STKPushResponse,  # Ensure you import the response models
+    TransactionResponse
 )
 
 class TestMPESAClient(unittest.TestCase):
@@ -39,13 +41,13 @@ class TestMPESAClient(unittest.TestCase):
         # Mock the STK push response with full model
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.text = json.dumps({
+        mock_response.json.return_value = {
             "MerchantRequestID": "test_request_id",
             "CheckoutRequestID": "mock_checkout_request_id",
             "ResponseCode": "0",
             "ResponseDescription": "Success",
             "CustomerMessage": "Request accepted"
-        })
+        }
         mock_request.return_value = mock_response
 
         request = STKPushRequest(
@@ -70,13 +72,13 @@ class TestMPESAClient(unittest.TestCase):
         # Mock the C2B payment response with full model
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.text = json.dumps({
+        mock_response.json.return_value = {
             "ResponseCode": "0",
             "ResponseDescription": "Success",
             "ConversationID": "test_conversation_id",
             "OriginatorConversationID": "test_originator_id",
             "TransactionID": "test_transaction_id"
-        })
+        }
         mock_request.return_value = mock_response
 
         request = C2BPaymentRequest(
@@ -100,13 +102,13 @@ class TestMPESAClient(unittest.TestCase):
         # Mock the B2C payment response with full model
         mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.text = json.dumps({
+        mock_response.json.return_value = {
             "ResponseCode": "0",
             "ResponseDescription": "Success",
             "ConversationID": "test_conversation_id",
             "OriginatorConversationID": "test_originator_id",
             "TransactionID": "test_transaction_id"
-        })
+        }
         mock_request.return_value = mock_response
 
         request = B2CRequest(
@@ -128,10 +130,10 @@ class TestMPESAClient(unittest.TestCase):
         # Mock a failure response for STK push
         mock_response = MagicMock()
         mock_response.status_code = 400
-        mock_response.text = json.dumps({
+        mock_response.json.return_value = {
             "errorCode": "400",
             "errorMessage": "Bad Request"
-        })
+        }
         mock_request.return_value = mock_response
 
         request = STKPushRequest(
