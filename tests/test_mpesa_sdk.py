@@ -22,8 +22,8 @@ load_dotenv()
 def mpesa_client():
     """Create a MPESAClient for testing"""
     config = Configuration(
-        consumer_key='lFqpIhZZpPM2WOpgyXamTMfaUiPOjR8xfaJGWXsqUGLEolY0',
-        consumer_secret='eAv4eSvvK6u05KMi33vWQNkM6mfvrvGV61OgIAfgphYpEPgDvSKauGKGSInAKTUA',
+        consumer_key=os.getenv('MPESA_CONSUMER_KEY'),  # Load from environment variable
+        consumer_secret=os.getenv('MPESA_CONSUMER_SECRET'),  # Load from environment variable
         environment='sandbox'
     )
     return MPESAClient(config)
