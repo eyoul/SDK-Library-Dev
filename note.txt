@@ -1,0 +1,40 @@
+   $ pytest tests/
+=========================================================== test session starts ============================================================ 
+platform win32 -- Python 3.11.9, pytest-8.3.4, pluggy-1.5.0
+rootdir: C:\Users\Eyoul Shimeles\Documents\GitHub\SDK-Library-Dev
+collected 23 items                                                                                                                           
+
+tests\test_auth.py ..                                                                                                                 [  8%] 
+tests\test_client.py ....                                                                                                             [ 26%] 
+tests\test_config.py .                                                                                                                [ 30%] 
+tests\test_exceptions.py ......                                                                                                       [ 56%] 
+tests\test_mpesa_sdk.py .sss..                                                                                                        [ 82%] 
+tests\test_utils.py ....                                                                                                              [100%] 
+
+The three tests that were skipped in your pytest output are likely due to the conditions set within the test functions 
+themselves. In your tests/test_mpesa_sdk.py file, there are checks for environment variables that must be configured 
+for the tests to run. If these environment variables are not set, the tests will be skipped.
+Here are the specific reasons based on the provided code:
+
+1. test_stk_push(mpesa_client): This test checks if the MPESA_SHORTCODE environment variable is set. If it is 
+not configured, the test is skipped.
+
+    if not shortcode:
+       pytest.skip("MPESA_SHORTCODE not configured")
+
+2. test_c2b_registration(mpesa_client): Similar to the previous test, this one also checks for the MPESA_SHORTCODE
+ environment variable. If it is not set, the test is skipped.
+
+    if not shortcode:
+       pytest.skip("MPESA_SHORTCODE not configured")
+
+3. test_b2c_payment(mpesa_client): This test checks for multiple environment variables: MPESA_SHORTCODE, 
+MPESA_INITIATOR_NAME, MPESA_SECURITY_CREDENTIAL, and TEST_PHONE_NUMBER. If any of these are not set,
+the test is skipped.
+
+    if not all([shortcode, initiator_name, security_credential, test_phone_number]):
+       pytest.skip("One or more required environment variables are not configured")
+
+To resolve the skipped tests, ensure that the required environment variables are set correctly in your 
+environment before running the tests. You can do this by creating a .env file or setting them directly 
+in your environment.
