@@ -214,27 +214,38 @@ def test_manual_stk_push(mpesa_client):
     Manual test for STK Push with specific request details
     This is a diagnostic test to help troubleshoot STK Push integration
     """
-    # Retrieve configuration from environment with default test values
-    shortcode = os.getenv('MPESA_SHORTCODE', '174379')
-    passkey = os.getenv('MPESA_PASSKEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919')
-    phone_number = os.getenv('TEST_PHONE_NUMBER', '251777139917')
-    callback_url = os.getenv('CALLBACK_URL', 'http://172.29.65.59:13345')
-    
+    # Retrieve configuration from environment
+    shortcode = os.getenv('MPESA_SHORTCODE')
+    passkey = os.getenv('MPESA_PASSKEY')
+    phone_number = os.getenv('TEST_PHONE_NUMBER')
+    callback_url = os.getenv('CALLBACK_URL')
+
     # Comprehensive environment variable validation
+    missing_vars = [
+        var for var, value in [
+            ('MPESA_SHORTCODE', shortcode),
+            ('MPESA_PASSKEY', passkey),
+            ('TEST_PHONE_NUMBER', phone_number),
+            ('CALLBACK_URL', callback_url)
+        ] if not value
+    ]
+
+    # Raise detailed error if any required variables are missing
+    if missing_vars:
+        raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+
+    # Comprehensive environment variable logging
     print("STK Push Test Configuration:")
     print(f"Shortcode: {shortcode}")
-    print(f"Passkey: {'*' * len(passkey) if passkey else 'NOT SET'}")
+    print(f"Passkey: {passkey[:5]}...")  # Mask sensitive information
     print(f"Phone Number: {phone_number}")
     print(f"Callback URL: {callback_url}")
-    
-    # Validate required environment variables with more informative messages
-    if not all([shortcode, passkey, phone_number, callback_url]):
-        pytest.fail("One or more required environment variables are not set.")
     
     try:
         # Generate timestamp (as per M-PESA requirements)
         from datetime import datetime
         import uuid
+        import base64
         
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         
