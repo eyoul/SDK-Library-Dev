@@ -15,9 +15,13 @@ from safaricom_sdk.utils import (
 )
 import base64
 import json
+import logging
+import requests
+from requests.auth import HTTPBasicAuth
 
 # Load environment variables
 load_dotenv()
+logging.captureWarnings(True)
 
 @pytest.fixture
 def mpesa_client():
@@ -41,16 +45,23 @@ def test_authentication(mpesa_client):
 
         # Attempt to get access token with explicit error handling
         try:
-            token = mpesa_client.auth.get_access_token()
-            
+            url = 'https://apisandbox.safaricom.et/v1/token/generate?grant_type=client_credentials'
+            # Use Basic Auth instead of Bearer token
+            auth = HTTPBasicAuth(mpesa_client.config.consumer_key, mpesa_client.config.consumer_secret)
+
+            # Ensure SSL verification is enabled
+            response = requests.get(url, auth=auth, verify=True)
+            response.raise_for_status()  # Raises an HTTPError for bad responses
+            token = response.json().get('access_token')
+
             # Comprehensive token validation
             assert token is not None, "Failed to generate access token: Token is None"
             assert isinstance(token, str), "Access token must be a string"
             assert len(token) > 0, "Access token cannot be empty"
-            
+
             # Partially print token for security
             print(f"Successfully generated access token: {token[:10]}...")
-            
+
         except Exception as auth_error:
             # Log the full traceback of authentication error
             import traceback
@@ -91,15 +102,15 @@ def test_stk_push(mpesa_client):
 
 def test_c2b_registration(mpesa_client):
     """Test C2B URL Registration with comprehensive error handling"""
-    shortcode = os.getenv('MPESA_SHORTCODE')
+    shortcode = os.getenv('MPESA_SHORTCODE_ALT')
     if not shortcode:
-        pytest.skip("MPESA_SHORTCODE not configured")
+        pytest.skip("MPESA_SHORTCODE_ALT not configured")
 
     # Print out environment details for debugging
     print("C2B Registration Test Environment Details:")
     print(f"Shortcode: {shortcode}")
-    print(f"Confirmation URL: https://mydomain.com/confirmation")
-    print(f"Validation URL: https://mydomain.com/validation")
+    print(f"Confirmation URL: https://www.myservice:8080/confirmation")
+    print(f"Validation URL: https://www.myservice:8080/validation")
 
     c2b_register_request = C2BRegisterURLRequest(
         ShortCode=shortcode,
